@@ -7,7 +7,7 @@ const isAuthenticated = require('../middleware/routerGuard.middleware');
 // Signup route
 router.post('/signup', async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, email } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ username });
@@ -20,7 +20,7 @@ router.post('/signup', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user
-        const newUser = await User.create({ username, passwordHash: hashedPassword });
+        await User.create({ username, passwordHash: hashedPassword, email });
 
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
