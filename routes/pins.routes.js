@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Pin = require('../models/Pin');
+const Pin = require('../models/Pin.model');
 
 // CREATE a new pin
 router.post('/', async (req, res, next) => {
