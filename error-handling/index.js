@@ -14,6 +14,7 @@ module.exports = (app) => {
       res
         .status(500)
         .json({
+          error: "ERROR" + " " + req.method + " " + req.path + " " + err,
           message: "Internal server error. Check the server console",
         });
     }
