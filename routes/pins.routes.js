@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pin = require('../models/Pin.model');
+const mongoose = require('mongoose');
 
 // CREATE a new pin
 router.post('/', async (req, res, next) => {
@@ -53,7 +54,7 @@ router.delete('/:pinId', async (req, res, next) => {
     const { pinId } = req.params
     if (mongoose.isValidObjectId(pinId)) {
         try {
-            await Pin.findByIdAndDelete(req.params.id);
+            await Pin.findByIdAndDelete(pinId);
             res.status(200).json('Pin has been deleted...');
         } catch (error) {
             next(error);
