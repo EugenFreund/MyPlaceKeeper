@@ -4,8 +4,11 @@ const PinCollection = require('../models/PinCollection.model');
 
 // CREATE a new collection
 router.post('/', async (req, res, next) => {
+    const { name, user } = req.body;
     try {
-        const newPinColletction = await PinCollection.create(req.body);
+        const collection = await PinCollection.findOne({ name, user });
+        if (collection) return res.status(400).json({ message: 'Collection already exists' });
+        const newPinColletction = await PinCollection.create({ name, user });
         res.status(201).json(newPinColletction);
     } catch (error) {
         next(error);
@@ -82,9 +85,12 @@ router.delete('/:collectionId/pins/:pinId', async (req, res, next) => {
 
 // UPDATE a collection
 router.put('/:collectionId', async (req, res, next) => {
+    const { name, user } = req.body;
     const { collectionId } = req.params;
     try {
-        const updatedCollection = await PinCollection.findByIdAndUpdate(collectionId, req.body, { new: true });
+        const collection = await PinCollection.exists({ name, user});
+        if (collection) return res.status(400).json({ message: 'Collection already exists' });
+        const updatedCollection = await PinCollection.findByIdAndUpdate(collectionId, {name, user}, { new: true });
         res.status(200).json(updatedCollection);
     } catch (error) {
         next(error);
