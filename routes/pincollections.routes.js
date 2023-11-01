@@ -31,7 +31,53 @@ router.get('/:collectionId', async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-    res.json(res.pin);
+});
+
+// READ a single collection by user
+router.get('/user/:userId', async (req, res, next) => {
+    const { userId } = req.params;
+    try {
+        const collection = await PinCollection.find({ user: userId });
+        res.status(200).json(collection);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// POST a pin to a collection
+router.post('/:collectionId/pins/:pinId', async (req, res, next) => {
+    const { collectionId, pinId } = req.params;
+    try {
+        const collection = await PinCollection.findById(collectionId)
+        if (collection.pins.includes(pinId)) return res.status(400).json({ message: 'Pin already in collection' });
+
+        const updatedCollection = await PinCollection.findByIdAndUpdate(collectionId, { $push: { pins: pinId } }, { new: true });
+        res.status(200).json(updatedCollection);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// READ all pins in a collection
+router.get('/:collectionId/pins', async (req, res, next) => {
+    const { collectionId } = req.params;
+    try {
+        const collection = await PinCollection.findById(collectionId).populate('pins');
+        res.status(200).json(collection.pins);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// DELETE a pin from a collection
+router.delete('/:collectionId/pins/:pinId', async (req, res, next) => {
+    const { collectionId, pinId } = req.params;
+    try {
+        const updatedCollection = await PinCollection.findByIdAndUpdate(collectionId, { $pull: { pins: pinId } }, { new: true });
+        res.status(200).json(updatedCollection);
+    } catch (error) {
+        next(error);
+    }
 });
 
 // UPDATE a collection
